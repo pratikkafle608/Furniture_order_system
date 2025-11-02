@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AR Furniture Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap"
+    rel="stylesheet">
+</head>
+
+<!--site header-->
+
+<body>
+  <header class="site-header">
+    <div class="nav-inner">
+      <nav class="main-nav" role="navigation" aria-label="Main">
+        <a class="nav-link" data-target="products">Home</a>
+        <a class="nav-link" data-target="home">About</a>
+        <!--<a class="nav-link" data-target="shop">Shop</a>-->
+        <a class="nav-link" data-target="contact">Contact</a>
+        <a class="nav-link" data-target="inventory">Inventory</a>
+        <a class="nav-link" href="visualizer.html">Visualizer</a>
+      </nav>
+
+      <div class="logo" aria-hidden="true">
+        <img src="logo.png" alt="logo">
+      </div>
+
+      <div class="cart-icon" id="cartIcon" title="Open cart" aria-label="Open cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M7 4h-2l-1 2H1v2h2l3.6 7.59L5.25 18A1 1 0 0 0 6 20h12v-2H7.42a1 1 0 0 1-.94-.66l.03-.09L9.1 12h6.45a1 1 0 0 0 .92-.62l3-7H6.21L7 4z" />
+        </svg>
+      </div>
+    </div>
+  </header>
+
+
+  <!--speech recognition-->
+  <section class="voice-section">
+  <h3>Voice Assistant</h3>
+  <p>Say “Add chair to cart” or “Show me beds.”</p>
+  <button id="startVoice">🎤 Speak</button>
+  <p id="voiceStatus">Press speak to start.</p>
+</section>
+
+  
+
+  <!-- Language Selector -->
+  <div class="language-selector">
+    <label for="languageSelect" class="visually-hidden">Select Language</label>
+    <select id="languageSelect" aria-label="Select language">
+      <option value="en" selected>English</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <option value="zh">中文</option>
+    </select>
+
+      <!-- existing scripts -->
+  <script src="script.js"></script>
+
+  <!-- translation script -->
+  <script>
+    // Paste the entire translation code here
+    const translations = {
+      es: {
+        navHome: "Inicio",
+        navAbout: "Acerca de",
+        navContact: "Contacto",
+        navInventory: "Inventario",
+        navVisualizer: "Visualizador",
+        productHercules: "Silla Hércules",
+        productTable: "Mesa",
+        productCouch: "Sofá",
+        productBed: "Cama",
+        heroKicker: "SISTEMA DE PEDIDOS DE MUEBLES",
+        heroJoin: "Únete ahora,",
+        heroAccent: "Para ahorrar mucho",
+        heroLead: "Nuestro sistema de pedidos de muebles está diseñado para agilizar su experiencia de compra — desde la navegación hasta la entrega. Rápido, confiable y hecho pensando en su comodidad.",
+        heroSmall: "Haz que cada pieza cuente. Porque el gran diseño comienza con un pedido fluido.",
+        joinTitle: "Unirse",
+        loginTitle: "Iniciar sesión",
+        joinBtn: "Unirse",
+        loginBtn: "Iniciar sesión",
+        categoryAll: "Todos",
+        categoryChair: "Sillas",
+        categoryTable: "Mesas",
+        categoryCouch: "Sofás",
+        categoryBed: "Camas",
+        priceAll: "Todos",
+        priceLow: "Menos de $200",
+        priceMid: "$200 - $500",
+        priceHigh: "Más de $500",
+        inventoryTitle: "Inventario",
+        cartTitle: "Mi carrito",
+        addToCart: "Añadir al carrito",
+        emptyCart: "Tu carrito está vacío",
+        itemSubtotal: "Subtotal",
+        tax: "Impuesto",
+        total: "Total",
+        browseMore: "Ver más"
+      },
+      zh: {
+        navHome: "主页",
+        navAbout: "关于",
+        navContact: "联系",
+        navInventory: "库存",
+        navVisualizer: "可视化",
+        productHercules: "赫拉克勒斯椅",
+        productTable: "桌子",
+        productCouch: "沙发",
+        productBed: "床",
+        heroKicker: "家具订购系统",
+        heroJoin: "立即加入，",
+        heroAccent: "节省更多",
+        heroLead: "我们的家具订购系统旨在简化您的购物体验——从浏览到送货。快速、可靠，并以您的舒适为中心。",
+        heroSmall: "让每件家具都值得，因为伟大的设计从顺畅的订购开始。",
+        joinTitle: "注册",
+        loginTitle: "登录",
+        joinBtn: "注册",
+        loginBtn: "登录",
+        categoryAll: "全部",
+        categoryChair: "椅子",
+        categoryTable: "桌子",
+        categoryCouch: "沙发",
+        categoryBed: "床",
+        priceAll: "全部",
+        priceLow: "$200 以下",
+        priceMid: "$200 - $500",
+        priceHigh: "$500 以上",
+        inventoryTitle: "库存",
+        cartTitle: "我的购物车",
+        addToCart: "加入购物车",
+        emptyCart: "购物车为空",
+        itemSubtotal: "商品小计",
+        tax: "税金",
+        total: "总计",
+        browseMore: "查看更多"
+      }
+    };
+
+    const langSelect = document.getElementById("languageSelect");
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      const t = translations[lang];
+
+      if (!t) return; // fallback for English
+
+      // Navigation
+      document.querySelectorAll(".main-nav a")[0].textContent = t.navHome;
+      document.querySelectorAll(".main-nav a")[1].textContent = t.navAbout;
+      document.querySelectorAll(".main-nav a")[2].textContent = t.navContact;
+      document.querySelectorAll(".main-nav a")[3].textContent = t.navInventory;
+      document.querySelectorAll(".main-nav a")[4].textContent = t.navVisualizer;
+
+      // Product captions
+      const captions = document.querySelectorAll(".product-frame .caption");
+      captions[0].textContent = t.productHercules;
+      captions[1].textContent = t.productTable;
+      captions[2].textContent = t.productCouch;
+      captions[3].textContent = t.productBed;
+
+      // Hero
+      document.querySelector(".kicker").textContent = t.heroKicker;
+      const heroH1 = document.querySelector(".left h1");
+      heroH1.innerHTML = t.heroJoin + "<br><span class='accent'>" + t.heroAccent + "</span>";
+      document.querySelector(".lead").textContent = t.heroLead;
+      document.querySelector(".right .small").textContent = t.heroSmall;
+      document.querySelector("#joinFormWrap .form-title").textContent = t.joinTitle;
+      document.querySelector("#loginForm .form-title").textContent = t.loginTitle;
+      document.querySelector("#joinForm button").textContent = t.joinBtn;
+      document.querySelector("#loginForm button").textContent = t.loginBtn;
+
+      // Filters
+      const categoryOptions = document.querySelectorAll("#categoryFilter option");
+      categoryOptions[0].textContent = t.categoryAll;
+      categoryOptions[1].textContent = t.categoryChair;
+      categoryOptions[2].textContent = t.categoryTable;
+      categoryOptions[3].textContent = t.categoryCouch;
+      categoryOptions[4].textContent = t.categoryBed;
+
+      const priceOptions = document.querySelectorAll("#priceFilter option");
+      priceOptions[0].textContent = t.priceAll;
+      priceOptions[1].textContent = t.priceLow;
+      priceOptions[2].textContent = t.priceMid;
+      priceOptions[3].textContent = t.priceHigh;
+
+      // Inventory title
+      document.querySelector(".inventory-header h3").textContent = t.inventoryTitle;
+
+      // Cart
+      document.querySelector("#cartSummary h3").textContent = t.cartTitle;
+      document.querySelector("#cartItemsList").textContent = t.emptyCart;
+      document.querySelectorAll(".addInventory").forEach(btn => btn.textContent = t.addToCart);
+      document.querySelector(".center-cta button").textContent = t.browseMore;
+      const cartTableCells = document.querySelectorAll(".cart-totals td");
+      cartTableCells[0].textContent = t.itemSubtotal;
+      cartTableCells[2].textContent = t.tax;
+      cartTableCells[4].textContent = t.total;
+    });
+  </script>
+</body>
+
+  </div>
+
+
+  <main>
+    <!-- Top framed product row -->
+    <section id = "products" class="product-row" aria-label="Featured products">
+      <div class="product-frame">
+        <img src="chair.png" alt="Hercules Chair">
+        <div class="caption">Hercules Chair</div>
+      </div>
+      <div class="product-frame">
+        <img src="table.png" alt="Table-desk">
+        <div class="caption">Table - desk</div>
+      </div>
+      <div class="product-frame">
+        <img src="couch.png" alt="Couch">
+        <div class="caption">Couch</div>
+      </div>
+      <div class="product-frame">
+        <img src="bed.png" alt="Bed">
+        <div class="caption">Bed</div>
+      </div>
+    </section>
+
+    <!--visualizer section-->
+    <div class="center-cta">
+      <button class="btn-ghost" id="browseMoreBtn">Browse more</button>
+    </div>
+
+    <!-- Hero / join and forms -->
+    <section class="hero" id="home">
+      <h2 class="kicker">FURNITURE ORDER SYSTEM</h2>
+
+      <div class="two-col">
+        <div class="left">
+          <h1>Join us now,<br><span class="accent">To Save Big</span></h1>
+          <p class="lead">Our furniture order system is designed to streamline your shopping experience — from browsing
+            to delivery. Fast, reliable, and built with your comfort in mind.</p>
+          <button class="btn-primary" id="signupBtn">Sign up here</button>
+
+          <div class="hero-image">
+            <img src="https://via.placeholder.com/380x220?text=Store+Interior" alt="store interior">
+          </div>
+        </div>
+
+        <div class="right">
+          <p class="small">Make every piece count. Because great design starts with a smooth order.</p>
+
+          <div class="box form-box" id="joinFormWrap">
+            <form id="joinForm">
+              <h3 class="form-title">Join</h3>
+              <label>Customer name<input type="text" name="name" placeholder="Your name" required></label>
+              <label>Address<input type="text" name="address" placeholder="Address" required></label>
+              <label>Email<input type="email" name="email" placeholder="email@example.com" required></label>
+              <label>Phone<input type="tel" name="phone" placeholder="+1 555 555 5555"></label>
+              <label>Password<input type="password" name="password" placeholder="password" required></label>
+              <button type="submit" class="btn-primary full">Join</button>
+            </form>
+          </div>
+
+          <div class="box form-box login-box">
+            <form id="loginForm">
+              <h3 class="form-title">Login</h3>
+              <label>Email<input type="email" name="loginEmail" placeholder="email@example.com" required></label>
+              <label>Password<input type="password" name="loginPassword" placeholder="password" required></label>
+              <button type="submit" class="btn-primary full">Log in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inventory -->
+     <div class="filter-bar">
+  <label>Category:
+    <select id="categoryFilter">
+      <option value="all">All</option>
+      <option value="chair">Chairs</option>
+      <option value="table">Tables</option>
+      <option value="couch">Couches</option>
+      <option value="bed">Beds</option>
+    </select>
+  </label>
+  <label>Price Range:
+    <select id="priceFilter">
+      <option value="all">All</option>
+      <option value="low">Under $200</option>
+      <option value="mid">$200 - $500</option>
+      <option value="high">Above $500</option>
+    </select>
+  </label>
+</div>
+<section class="inventory" id="inventory">
+  <div class="inventory-header">
+    <h3>Inventory</h3>
+    <div class="sort">Sort by ▾</div>
+  </div>
+
+  <!-- Hercules Chair -->
+  <div class="inventory-item" role="region" aria-label="Hercules Chair details">
+    <div class="inv-left">
+      <div class="sketch-frame">
+        <img src="chair.png" alt="Hercules Chair">
+      </div>
+    </div>
+
+    <div class="inv-right">
+      <h4>Hercules Chair</h4>
+      <p class="inv-price">$149.99</p>
+      <p class="inv-desc">Built with a heavy-duty steel frame and reinforced legs, this chair offers exceptional
+        stability and a high weight capacity. Ideal for restaurants, events, and everyday use. Stackable for easy
+        storage.</p>
+
+      <ul class="specs">
+        <li>Overall Height: 32 inches</li>
+        <li>Seat Width: 17 inches</li>
+        <li>Seat Height: 17 inches</li>
+        <li>Back Height: 15 inches</li>
+        <li>Weight: 10 lbs</li>
+      </ul>
+
+      <div class="inv-actions">
+        <button class="btn-secondary addInventory" data-name="Hercules Chair" data-price="149.99">Add to cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comfort Couch -->
+  <div class="inventory-item" role="region" aria-label="Comfort Couch details">
+    <div class="inv-left">
+      <div class="sketch-frame">
+        <img src="couch.png" alt="Comfort Couch">
+      </div>
+    </div>
+
+    <div class="inv-right">
+      <h4>Comfort Couch</h4>
+      <p class="inv-price">$899.99</p>
+      <p class="inv-desc">Experience ultimate relaxation with our premium comfort couch. Features high-density foam cushions, 
+        sturdy wooden frame, and premium fabric upholstery. Perfect for family rooms and living spaces.</p>
+
+      <ul class="specs">
+        <li>Overall Dimensions: 84" W × 36" D × 32" H</li>
+        <li>Seating Capacity: 3 people</li>
+        <li>Material: Premium fabric with solid wood frame</li>
+        <li>Weight: 120 lbs</li>
+        <li>Features: Removable cushions, stain-resistant fabric</li>
+      </ul>
+
+      <div class="inv-actions">
+        <button class="btn-secondary addInventory" data-name="Comfort Couch" data-price="899.99">Add to cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sectional Sofa -->
+  <div class="inventory-item" role="region" aria-label="Sectional Sofa details">
+    <div class="inv-left">
+      <div class="sketch-frame">
+        <img src="couch.png" alt="Sectional Sofa">
+      </div>
+    </div>
+
+    <div class="inv-right">
+      <h4>Sectional Sofa</h4>
+      <p class="inv-price">$1,299.99</p>
+      <p class="inv-desc">Modern L-shaped sectional sofa with chaise lounge. Offers ample seating space and contemporary 
+        design. Perfect for entertaining guests or family movie nights.</p>
+
+      <ul class="specs">
+        <li>Overall Dimensions: 112" W × 65" D × 30" H</li>
+        <li>Seating Capacity: 4-5 people</li>
+        <li>Material: Leather-look upholstery with metal legs</li>
+        <li>Weight: 180 lbs</li>
+        <li>Features: Reversible chaise, modular design</li>
+      </ul>
+
+      <div class="inv-actions">
+        <button class="btn-secondary addInventory" data-name="Sectional Sofa" data-price="1299.99">Add to cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Queen Size Bed -->
+  <div class="inventory-item" role="region" aria-label="Queen Size Bed details">
+    <div class="inv-left">
+      <div class="sketch-frame">
+        <img src="bed.png" alt="Queen Size Bed">
+      </div>
+    </div>
+
+    <div class="inv-right">
+      <h4>Queen Size Bed</h4>
+      <p class="inv-price">$599.99</p>
+      <p class="inv-desc">A sturdy and elegant queen size bed frame that combines durability with modern aesthetics. 
+        Features a slatted base for mattress support and ample under-bed storage space.</p>
+
+      <ul class="specs">
+        <li>Overall Dimensions: 65" W × 85" L × 40" H</li>
+        <li>Mattress Size: Queen (60" × 80")</li>
+        <li>Material: Solid wood construction</li>
+        <li>Weight Capacity: 600 lbs</li>
+        <li>Assembly Required: Yes</li>
+      </ul>
+
+      <div class="inv-actions">
+        <button class="btn-secondary addInventory" data-name="Queen Size Bed" data-price="599.99">Add to cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- King Size Bed -->
+  <div class="inventory-item" role="region" aria-label="King Size Bed details">
+    <div class="inv-left">
+      <div class="sketch-frame">
+        <img src="bed.png" alt="King Size Bed">
+      </div>
+    </div>
+
+    <div class="inv-right">
+      <h4>King Size Bed</h4>
+      <p class="inv-price">$799.99</p>
+      <p class="inv-desc">Experience luxury and space with our premium king size bed. Features a reinforced frame, 
+        elegant headboard, and built-in side tables. Perfect for master bedrooms.</p>
+
+      <ul class="specs">
+        <li>Overall Dimensions: 78" W × 85" L × 42" H</li>
+        <li>Mattress Size: King (76" × 80")</li>
+        <li>Material: Mahogany wood with metal reinforcements</li>
+        <li>Weight Capacity: 800 lbs</li>
+        <li>Features: Built-in side tables, USB charging ports</li>
+      </ul>
+
+      <div class="inv-actions">
+        <button class="btn-secondary addInventory" data-name="King Size Bed" data-price="799.99">Add to cart</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar">
+  <div class="progress" style="width: 20%;"></div>
+</div>
+
+<section class="cart-summary" id="cartSummary">
+  <h3>My cart</h3>
+  <div class="cart-wrap">
+    <div class="cart-image">
+      <img src="chair.png" alt="cart item">
+    </div>
+    <div class="cart-details">
+      <div class="cart-lines" id="cartItemsList">Your cart is empty</div>
+
+      <table class="cart-totals" role="table" aria-label="Cart totals">
+        <tr>
+          <td>Item subtotal</td>
+          <td id="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Tax</td>
+          <td id="tax">$0.00</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total</td>
+          <td id="grandTotal">$0.00</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+    
+
+  <footer class="site-footer">
+    <p>© 2025 AR Furniture Prototype</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
+
+<section id="contact" class="contact-section">
+  <h3>Contact Us</h3>
+  <p><strong>Company:</strong> Furnicraft</p>
+  <p><strong>Location:</strong> 1234 E Broadway Street, Texarkana, Texas, 75503</p>
+  <p><strong>Email:</strong> <a href="mailto:contact@furnicraft.com">contact@furnicraft.com</a></p>
+</section>
+

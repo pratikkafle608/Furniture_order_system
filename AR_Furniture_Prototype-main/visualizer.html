@@ -1,0 +1,91 @@
+<body>
+    <header class="site-header">
+        <div class="nav-inner">
+            <nav class="main-nav" role="navigation" aria-label="Main">
+                <a class="nav-link" href = "index.html" data-target="products">Home</a>
+                <!--<a class="nav-link" data-target="home">About</a>
+                <!--<a class="nav-link" data-target="shop">Shop</a>
+                <a class="nav-link" data-target="contact">Contact</a>
+                <a class="nav-link" data-target="inventory">Inventory</a>
+                <a class="nav-link" href="visualizer.html">Visualizer</a>-->
+            </nav>
+
+            <section id="visualizer" class="visualizer">
+                <h3>3D Room Visualizer</h3>
+                <p>Drag furniture items into the room to see how they fit!</p>
+                <canvas id="roomCanvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="rotateBtn">Rotate</button>
+                    <button id="scaleBtn">Resize</button>
+                    <button id="resetBtn">Reset</button>
+                </div>
+
+                
+            </section>
+
+            <script>
+                const canvas = document.getElementById('roomCanvas');
+                const ctx = canvas.getContext('2d');
+
+                let img = new Image();
+                img.src = 'couch.png'; // Image to manipulate
+
+                let x = 300, y = 200;   // initial position
+                let scale = 1;          // initial scale
+                let rotation = 0;       // initial rotation in radians
+                let dragging = false;
+                let offsetX, offsetY;
+
+                // Draw the image on canvas
+                function drawImage() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(rotation);
+                    ctx.drawImage(img, -img.width / 2 * scale, -img.height / 2 * scale, img.width * scale, img.height * scale);
+                    ctx.restore();
+                }
+
+                // Mouse events for dragging
+                canvas.addEventListener('mousedown', e => {
+                    const rect = canvas.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left - x;
+                    offsetY = e.clientY - rect.top - y;
+                    dragging = true;
+                });
+
+                canvas.addEventListener('mouseup', () => dragging = false);
+                canvas.addEventListener('mouseleave', () => dragging = false);
+
+                canvas.addEventListener('mousemove', e => {
+                    if (dragging) {
+                        const rect = canvas.getBoundingClientRect();
+                        x = e.clientX - rect.left - offsetX;
+                        y = e.clientY - rect.top - offsetY;
+                        drawImage();
+                    }
+                });
+
+                // Rotate button
+                document.getElementById('rotateBtn').addEventListener('click', () => {
+                    rotation += Math.PI / 8; // rotate 22.5 degrees
+                    drawImage();
+                });
+
+                // Scale button
+                document.getElementById('scaleBtn').addEventListener('click', () => {
+                    scale += 0.1; // increase size
+                    drawImage();
+                });
+
+                // Reset button
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    x = 300; y = 200;
+                    scale = 1;
+                    rotation = 0;
+                    drawImage();
+                });
+
+                // Draw initially
+                img.onload = drawImage;
+            </script>
